@@ -3,14 +3,13 @@ const User = require('../models/User');
 
 module.exports = async (req, res, next)=>{
     try {
-
-        const { cookies } = req;
+        const cookies  = req.cookies;
         if ('token' in cookies) {
           const token = cookies.token;
-          const decoded = jwt.verify(token, process.env.SECRET);
+          const decoded = JWT.verify(token, process.env.SECRET);
           console.log(decoded);
           let isAdmin = await User.findOne({
-            where: { email: decoded.email, is_admin:true },
+            where: {email: decoded.email, is_admin:true },
           });
           if (isAdmin) {
             next();

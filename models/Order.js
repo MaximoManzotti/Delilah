@@ -19,7 +19,7 @@ const Order = db.define('order', {
   },
   payment_method: {
     type: Sequelize.STRING,
-    defaultValue: "Efectivo"
+    defaultValue: "Cash"
   },
 });
 

@@ -3,13 +3,13 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 07-10-2020 a las 17:29:46
+-- Tiempo de generación: 13-10-2020 a las 21:09:52
 -- Versión del servidor: 10.4.13-MariaDB
 -- Versión de PHP: 7.4.8
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+03:00";
+SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -20,6 +20,8 @@ SET time_zone = "+03:00";
 --
 -- Base de datos: `Delilah`
 --
+CREATE DATABASE IF NOT EXISTS `Delilah` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `Delilah`;
 
 -- --------------------------------------------------------
 
@@ -34,9 +36,17 @@ CREATE TABLE `orders` (
   `total` float NOT NULL,
   `user_id` int(11) NOT NULL,
   `payment_method` varchar(55) NOT NULL,
- `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
-  `updatedAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `updatedAt` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `orders`
+--
+
+INSERT INTO `orders` (`id`, `status`, `description`, `total`, `user_id`, `payment_method`, `createdAt`, `updatedAt`) VALUES
+(56, 'Nuevo', '2 x Milanesa con Papas Fritas 3 x choripan', 2750, 1, 'Efectivo', '2020-10-13 16:40:09', '2020-10-13 16:40:09'),
+(57, 'Nuevo', '2 x Milanesa con Papas Fritas 3 x choripan', 2750, 1, 'Efectivo', '2020-10-13 16:40:33', '2020-10-13 16:40:33');
 
 -- --------------------------------------------------------
 
@@ -49,9 +59,18 @@ CREATE TABLE `orders_products` (
   `orderId` int(11) DEFAULT NULL,
   `productId` int(11) DEFAULT NULL,
   `product_quantity` int(11) NOT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
-  `updatedAt` datetime NOT NULL DEFAULT current_timestamp()
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `orders_products`
+--
+
+INSERT INTO `orders_products` (`id`, `orderId`, `productId`, `product_quantity`, `createdAt`, `updatedAt`) VALUES
+(36, 56, 3, 3, '2020-10-13 16:40:10', '2020-10-13 16:40:10'),
+(37, 57, 2, 2, '2020-10-13 16:40:33', '2020-10-13 16:40:33'),
+(38, 57, 3, 3, '2020-10-13 16:40:33', '2020-10-13 16:40:33');
 
 -- --------------------------------------------------------
 
@@ -62,11 +81,18 @@ CREATE TABLE `orders_products` (
 CREATE TABLE `products` (
   `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `price` varchar(50) NOT NULL,
-  `product_image` varchar(50) DEFAULT NULL,
-  `createdAt` datetime NOT NULL DEFAULT current_timestamp(),
-  `updatedAt` datetime NOT NULL DEFAULT current_timestamp()
+  `price` int(50) NOT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `products`
+--
+
+INSERT INTO `products` (`id`, `name`, `price`, `createdAt`, `updatedAt`) VALUES
+(2, 'Milanesa con Papas Fritas', 700, '2020-10-11 22:29:00', '2020-10-11 22:29:00'),
+(3, 'choripan', 450, '2020-10-11 22:58:49', '2020-10-11 22:58:49');
 
 -- --------------------------------------------------------
 
@@ -93,7 +119,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `firstname`, `lastname`, `email`, `phone`, `address`, `password`, `createdAt`, `updatedAt`, `is_admin`) VALUES
-(1, 'Maximo', 'Maximo', 'Manzotti', 'maximo1611@gmail.com', '1123493002', 'juncal', '12345', '2020-10-07 02:28:04', '2020-10-07 02:28:04', 1);
+(1, 'Max', 'Maximo', 'Manzotti', 'maximo1611@gmail.com', '1123487300', 'San Martin', 'dragon', '2020-10-07 02:28:04', '2020-10-07 02:28:04', 1),
+(2, 'GuitarGod', 'Max', 'Duahu', 'guitargod@gmail.com', '1124653002', 'Bulnes', 'angusyoung', '2020-10-09 15:50:57', '2020-10-09 15:50:57', 0);
 
 --
 -- Índices para tablas volcadas
@@ -134,25 +161,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT de la tabla `orders_products`
 --
 ALTER TABLE `orders_products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT de la tabla `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restricciones para tablas volcadas

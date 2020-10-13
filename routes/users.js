@@ -3,7 +3,7 @@ const router = express.Router()
 const User = require('../models/User');
 const JWT = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
-const checkauth = require('../middleware/auth')
+const checkAuth = require('../middleware/auth')
 const checkAdmin = require ('../middleware/Admin')
 //GET /users
 
@@ -19,7 +19,7 @@ router.get('/',checkAdmin,  async (req, res) => {
 });
 
 //POST users/login
-router.post('/login',checkauth , async (req, res) => {
+router.post('/login', async (req, res) => {
   const email = req.body.email
   try {
 
@@ -39,6 +39,7 @@ router.post('/login',checkauth , async (req, res) => {
             email: email,
           }, process.env.SECRET, { expiresIn: '1h' })
           res.cookie("token", token, { httpOnly: true });
+          res.cookie("id", user.id ,{httpOnly: true} )
           res.status(200).json({ message: user, token })
         }
       })
@@ -48,59 +49,71 @@ router.post('/login',checkauth , async (req, res) => {
   }
 });
 
-//POST user/register
-// router.post('/register' ,async (req, res) => {
-//   const data = req.body;
-//   let {
-//     username,
-//     firstname,
-//     lastname,
-//     email,
-//     phone,
-//     address,
-//     password,
-//     is_admin,
-//   } = data;
+// POST user/register
 
-//   try {
-//     const usernameAlreadyRegistered = await User.findAll({
-//       where: { username },
-//     });
-//     const emailAlreadyRegistered = await User.findAll({ where: { email } });
+router.post('/register' ,async (req, res) => {
+  const data = req.body;
+  let {
+    username,
+    firstname,
+    lastname,
+    email,
+    phone,
+    address,
+    password
+  } = data;
 
-//     if (usernameAlreadyRegistered.length) {
-//       res
-//         .status(409)
-//         .json({ message: `Username taken, try with a different one!` });
-//     } else if (emailAlreadyRegistered.length) {
-//       res.status(409).json({
-//         message: `Email already registered, try with a different one!`,
-//       });
-//     } else {
-//       bcrypt.hash(password, 10, async (err, hash) => {
-//         if (err) {
-//           return res.status(500).json({
-//             error: err,
-//           });
-//         } else {
-//           const newUser = await User.create({
-//             username,
-//             firstname,
-//             lastname,
-//             email,
-//             phone,
-//             address,
-//             password: hash,
-//             is_admin,
-//           });
-//           res.status(200).json({ message: 'User created succesfully!' });
-//         }
-//       });
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({ error: err });
-//   }
-// });
+  try {
+    const usernameAlreadyRegistered = await User.findAll({
+      where: { username },
+    });
+    const emailAlreadyRegistered = await User.findAll({ where: { email } });
+     
+    if (usernameAlreadyRegistered.length) {
+      res
+        .status(409)
+        .json({ message: `Username in use, Please chose other` });
+    } else if (emailAlreadyRegistered.length) {
+      res.status(409).json({
+        message: `Email is linked with a acount`,
+      });
+    } else {
+      bcrypt.hash(password, 10, async (err, hash) => {
+        if (err) {
+          return res.status(500).json({
+            error: err,
+          });
+        } else {
+          const newUser = await User.create({
+            username,
+            firstname,
+            lastname,
+            email,
+            phone,
+            address,
+            password: hash
+          });
+          res.status(200).json({ message: 'User created succesfully!' });
+        }
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "faltan campos o se produjo un error" });
+  }
+});
+//POST DELETE
 
+router.delete('/delete', async (req, res) => {
+  try{
+  const data = req.body.email;
+    const removedUser = await User.destroy({ where: { email: data} });
+    if (!removedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    } else {
+      res.status(200).json({ message: 'User Deleted!' });
+    }}catch(err){
+    res.status(500).json({ message: "Delete failed" });
+  }
+});
 module.exports = router;

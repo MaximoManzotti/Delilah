@@ -1,16 +1,13 @@
 const { Sequelize } = require('sequelize');
 const db = require('../db/database');
 
-const Product = db.define('product', {
+const Product = db.define('products', {
   name: {
     type: Sequelize.STRING,
   },
   price: {
-    type: Sequelize.STRING,
-  },
-  product_image: {
-    type: Sequelize.STRING,
-  },
+    type: Sequelize.INTEGER,
+  }
 });
 
 module.exports = Product;

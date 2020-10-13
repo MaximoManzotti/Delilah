@@ -12,11 +12,22 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 app.use(cors());
 app.use(cookieParser())
+
+
+//Inicializacion del server
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log('Server start');
+});
+
+
+
 //controllers 
 
-const ProductRoutes = require('./routes/products');
 const UserRoutes = require('./routes/users');
 const OrderRoutes = require('./routes/orders');
+const ProductRoutes = require('./routes/products');
 
 app.use('/products', ProductRoutes)
 app.use('/orders', OrderRoutes)
@@ -30,13 +41,5 @@ db.authenticate()
 })
   .catch((error) => {
     console.log('no arranco');
-});
-
-
-//Inicializacion del server
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log('Server start');
 });
 

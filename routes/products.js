@@ -1,49 +1,76 @@
+const Product = require('../models/Product');
 const express = require('express');
 const router = express.Router()
+const checkAuth = require('../middleware/auth')
+const checkAdmin = require('../middleware/Admin')
 
-router.get('/', (req, res, next)=>{
-    res.status(200).json({
-       message:('Handling GET request of products')
-      })
-     }
-    )
 
-router.post('/', (req, res, next)=>{
-    const product ={
-        name: req.body.name,
-        price: req.body.price
+//Get ALL PRODUCTS
+router.get('/', async (req, res) => {
+    try {
+        const products = await Product.findAll();
+        res.status(200).json({ message: products });
+    } catch (err) {
+        res.status(500).json({ error: err });
     }
-       res.status(201).json({
-           message:('Handling POST request of products'),
-           createdProduct: product
-          })
-         }
-        )
-router.get('/:productId', (req, res, next)=>{
-    const id = req.params.productId;
-    if(id === 'special'){
-        res.status(200).json({
-            message: 'You discoverd the special ID',
-            id: id
-        })
-    }else{
-        res.status(200).json({
-            message:'You passed an ID'
-        })
-    }
-  
 })
+//POST PRODUCTS ADMIN
+router.post("/add", checkAuth, checkAdmin, async (req, res) => {
+    try {
+        let { name, price } = req.body;
+        let newProduct = await Product.create({
+            name,
+            price,
+        });
+        res.status(200).json({ message: 'New product was created', product: newProduct });
+    } catch (err) {
+        res.status(500).json({ error: err });
+    }
+});
 
-router.patch('/:productId', (req, res, next)=>{
-res.status(200).json({
-    message: 'update products'
-})})
+// 
+router.post('/find',checkAuth, async (req, res) => {
+    try {
+        const name  = req.body.name;
+        const product = await Product.findOne({
+            where: { name: name }
+        });
+        if (!product) {
+            res.status(404).json({ message: 'Product not found' });
+        } else res.status(200).json({ product });
+    } catch (err) {
+        res.status(500).json({ error: err });
+    }
+})
+router.post('/modify', checkAdmin, async (req, res) => {
+    try {
+      const name = req.body.name;
+       const price = req.body.price;
 
-router.delete('/:productId', (req, res, next)=>{
-   
-    res.status(200).json({
-        message: 'deleted products'
-    })
-    })
+      const modify = await Product.update(
+        { name, price },
+        { where: {name:name}}
+      );
+  
+      res.status(200).json({ message: "Price changed successfully"});
+    } catch (err) {
+      res.status(500).json({ error: err });
+    }
+  })
+
+  router.delete('/delete', async (req, res) => {
+    try {
+      const name = req.body.name;
+  
+      const deletedProduct = await Product.destroy({ where: { name: name} });
+      if (!deletedProduct) {
+        return res.status(404).json({ message: 'Product not found' });
+
+      } else res.status(200).json({ message: 'Product deleted' });
+    } catch (err) {
+      res.status(500).json({ error: err });
+    }
+  });
+  
 
 module.exports = router;
